@@ -1,0 +1,23 @@
+<div class="layout">
+  <aside class="sidebar">
+    <h1>{{ translate('app.title') }}</h1>
+    <p class="subtitle">{{ translate('app.subtitle') }}</p>
+
+    <div class="identity-box">
+      <div><strong>{{ translate('common.user') }}:</strong> {{ username || preferredUsername || '-' }}</div>
+      <div><strong>{{ translate('common.client') }}:</strong> {{ selectedClient || '-' }}</div>
+      <div><strong>{{ translate('common.role') }}:</strong> {{ selectedRole || '-' }}</div>
+    </div>
+
+    <nav>
+      <a *ngFor="let item of menuItems" [routerLink]="item.route" routerLinkActive="active">{{ translate(item.labelKey) }}</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="topbar">
+      <a [href]="dashboardUrl" target="_blank" class="dashboard-link">{{ translate('app.backToDashboard') }}</a>
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>

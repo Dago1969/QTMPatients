@@ -1,0 +1,105 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+/**
+ * Gestione locale del token JWT condiviso con QTMDashboard.
+ */
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private readonly tokenStorageKey = 'qtm_access_token';
+  private readonly roleStorageKey = 'qtm_selected_role';
+  private readonly clientStorageKey = 'qtm_selected_client';
+  private readonly selectedRoleSubject = new BehaviorSubject<string>(localStorage.getItem(this.roleStorageKey) ?? '');
+
+  getToken(): string | null {
+    const token = localStorage.getItem(this.tokenStorageKey);
+
+    if (!token) {
+      return null;
+    }
+
+    if (this.isTokenExpired(token)) {
+      localStorage.removeItem(this.tokenStorageKey);
+      return null;
+    }
+
+    return token;
+  }
+
+  setToken(token: string): void {
+    localStorage.setItem(this.tokenStorageKey, token);
+  }
+
+  isAuthenticated(): boolean {
+    return this.getToken() !== null;
+  }
+
+  getName(): string | null {
+    return this.readClaim('name');
+  }
+
+  getPreferredUsername(): string | null {
+    return this.readClaim('preferred_username');
+  }
+
+  setSelectedRole(role: string): void {
+    localStorage.setItem(this.roleStorageKey, role);
+    this.selectedRoleSubject.next(role);
+  }
+
+  getSelectedRole(): string {
+    return localStorage.getItem(this.roleStorageKey) ?? '';
+  }
+
+  getSelectedRoleChanges(): Observable<string> {
+    return this.selectedRoleSubject.asObservable();
+  }
+
+  setSelectedClient(client: string): void {
+    localStorage.setItem(this.clientStorageKey, client);
+  }
+
+  getSelectedClient(): string {
+    return localStorage.getItem(this.clientStorageKey) ?? '';
+  }
+
+  private readClaim(claimName: string): string | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payload = JSON.parse(this.decodeBase64Url(token.split('.')[1])) as Record<string, unknown>;
+      const value = payload[claimName];
+      return typeof value === 'string' ? value : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private isTokenExpired(token: string): boolean {
+    const parts = token.split('.');
+
+    if (parts.length < 2) {
+      return true;
+    }
+
+    try {
+      const payload = this.decodeBase64Url(parts[1]);
+      const claims = JSON.parse(payload) as { exp?: number };
+      if (typeof claims.exp !== 'number') {
+        return true;
+      }
+      return claims.exp <= Math.floor(Date.now() / 1000);
+    } catch {
+      return true;
+    }
+  }
+
+  private decodeBase64Url(value: string): string {
+    const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+    const paddingLength = (4 - (base64.length % 4)) % 4;
+    return atob(base64 + '='.repeat(paddingLength));
+  }
+}
