@@ -1,6 +1,6 @@
 package com.qtm.patients.patient.controller;
 
-import com.qtm.patients.patient.dto.PatientDto;
+import com.qtm.commonlib.dto.PatientDto;
 import com.qtm.patients.patient.service.PatientSearchCriteria;
 import com.qtm.patients.patient.service.PatientService;
 import jakarta.validation.Valid;

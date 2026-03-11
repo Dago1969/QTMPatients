@@ -1,6 +1,6 @@
 package com.qtm.patients.patient.service;
 
-import com.qtm.patients.patient.dto.PatientDto;
+import com.qtm.commonlib.dto.PatientDto;
 import com.qtm.patients.patient.entity.PatientEntity;
 import com.qtm.patients.patient.mapper.PatientMapper;
 import com.qtm.patients.patient.repository.PatientRepository;
