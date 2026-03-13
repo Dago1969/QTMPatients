@@ -1,146 +1,27 @@
+import { messages } from './messages.generated';
+
 const DEFAULT_LANGUAGE = 'it' as const;
 
-type Language = 'it' | 'en';
+export type Language = keyof typeof messages;
+export type MessageKey = keyof typeof messages.it;
 
-const messages: Record<Language, Record<string, string>> = {
-  it: {
-    'app.title': 'QTM Patients',
-    'app.subtitle': 'Gestione pazienti collegata a QTMDashboard',
-    'app.backToDashboard': 'Torna a QTMDashboard',
-    'common.client': 'Client',
-    'common.role': 'Ruolo',
-    'common.user': 'Utente',
-    'common.id': 'ID',
-    'menu.patientsSearch': 'Ricerca Pazienti',
-    'menu.patientsNew': 'Nuovo Paziente',
-    'patients.search.title': 'Ricerca Pazienti',
-    'patients.title.new': 'Inserisci Paziente',
-    'patients.title.edit': 'Modifica Paziente',
-    'patients.title.view': 'Visualizza Paziente',
-    'patients.folder.identity': 'Dati identificativi e contatto',
-    'patients.folder.privacy': 'Consensi e privacy',
-    'patients.folder.medical': 'Informazioni mediche e terapeutiche',
-    'patients.field.assistedId': 'ID Assistito',
-    'patients.field.firstName': 'Nome',
-    'patients.field.lastName': 'Cognome',
-    'patients.field.fiscalCode': 'Codice fiscale',
-    'patients.field.email': 'Email',
-    'patients.field.primaryPhone': 'Telefono principale',
-    'patients.field.secondaryPhone': 'Telefono secondario',
-    'patients.field.region': 'Regione',
-    'patients.field.province': 'Provincia',
-    'patients.field.city': 'Comune',
-    'patients.field.deliveryAddress': 'Indirizzo di consegna',
-    'patients.field.secondaryAddresses': 'Indirizzi secondari',
-    'patients.field.communicationChannels': 'Canali di comunicazione',
-    'patients.field.identificationDocumentReference': 'Documento identificativo',
-    'patients.field.dataProcessingConsent': 'Consenso trattamento dati',
-    'patients.field.dataProcessingConsentDateTime': 'Data/ora consenso',
-    'patients.field.dataProcessingConsentRevocationLog': 'Log revoca consenso',
-    'patients.field.additionalConsents': 'Altri consensi',
-    'patients.field.therapyStatus': 'Stato terapia',
-    'patients.field.prescribingSpecialist': 'Specialista prescrittore',
-    'patients.field.referenceHospitalStructure': 'Struttura ospedaliera di riferimento',
-    'patients.field.referencePharmacy': 'Farmacia di riferimento',
-    'patients.field.preferredPickupPharmacy': 'Farmacia preferita per il ritiro',
-    'patients.field.deliveryMode': 'Modalita consegna',
-    'patients.field.reminderEnabled': 'Reminder attivo',
-    'patients.field.caregiverFullName': 'Nome completo caregiver',
-    'patients.field.caregiverPhone': 'Telefono caregiver',
-    'patients.field.preferredContact': 'Contatto preferito',
-    'patients.field.structureId': 'ID Struttura',
-    'search.filters': 'Filtri',
-    'search.results': 'Risultati',
-    'search.actions': 'Azioni',
-    'search.success.completed': 'Ricerca completata con successo.',
-    'search.noResults': 'Nessun paziente trovato.',
-    'search.action.edit': 'Modifica',
-    'search.action.view': 'Visualizza',
-    'crud.actions.search': 'Cerca',
-    'crud.actions.reset': 'Reset',
-    'crud.actions.new': 'Nuovo',
-    'crud.actions.create': 'Crea',
-    'crud.actions.update': 'Aggiorna',
-    'crud.actions.cancel': 'Annulla',
-    'crud.actions.back': 'Indietro',
-    'crud.success.create': 'Paziente creato correttamente.',
-    'crud.success.update': 'Paziente aggiornato correttamente.',
-    'crud.error.load': 'Impossibile caricare il paziente.',
-    'crud.error.search': 'Ricerca non riuscita.',
-    'crud.error.save': 'Salvataggio non riuscito.',
-    'crud.loading': 'Caricamento in corso...'
-  },
-  en: {
-    'app.title': 'QTM Patients',
-    'app.subtitle': 'Patient management connected to QTMDashboard',
-    'app.backToDashboard': 'Back to QTMDashboard',
-    'common.client': 'Client',
-    'common.role': 'Role',
-    'common.user': 'User',
-    'common.id': 'ID',
-    'menu.patientsSearch': 'Patient Search',
-    'menu.patientsNew': 'New Patient',
-    'patients.search.title': 'Patient Search',
-    'patients.title.new': 'Create Patient',
-    'patients.title.edit': 'Edit Patient',
-    'patients.title.view': 'View Patient',
-    'patients.folder.identity': 'Identity and contact data',
-    'patients.folder.privacy': 'Consents and privacy',
-    'patients.folder.medical': 'Medical and therapy information',
-    'patients.field.assistedId': 'Assisted ID',
-    'patients.field.firstName': 'First name',
-    'patients.field.lastName': 'Last name',
-    'patients.field.fiscalCode': 'Fiscal code',
-    'patients.field.email': 'Email',
-    'patients.field.primaryPhone': 'Primary phone',
-    'patients.field.secondaryPhone': 'Secondary phone',
-    'patients.field.region': 'Region',
-    'patients.field.province': 'Province',
-    'patients.field.city': 'City',
-    'patients.field.deliveryAddress': 'Delivery address',
-    'patients.field.secondaryAddresses': 'Secondary addresses',
-    'patients.field.communicationChannels': 'Communication channels',
-    'patients.field.identificationDocumentReference': 'Identification document',
-    'patients.field.dataProcessingConsent': 'Data processing consent',
-    'patients.field.dataProcessingConsentDateTime': 'Consent date/time',
-    'patients.field.dataProcessingConsentRevocationLog': 'Consent revocation log',
-    'patients.field.additionalConsents': 'Additional consents',
-    'patients.field.therapyStatus': 'Therapy status',
-    'patients.field.prescribingSpecialist': 'Prescribing specialist',
-    'patients.field.referenceHospitalStructure': 'Reference hospital structure',
-    'patients.field.referencePharmacy': 'Reference pharmacy',
-    'patients.field.preferredPickupPharmacy': 'Preferred pickup pharmacy',
-    'patients.field.deliveryMode': 'Delivery mode',
-    'patients.field.reminderEnabled': 'Reminder enabled',
-    'patients.field.caregiverFullName': 'Caregiver full name',
-    'patients.field.caregiverPhone': 'Caregiver phone',
-    'patients.field.preferredContact': 'Preferred contact',
-    'patients.field.structureId': 'Structure ID',
-    'search.filters': 'Filters',
-    'search.results': 'Results',
-    'search.actions': 'Actions',
-    'search.success.completed': 'Search completed successfully.',
-    'search.noResults': 'No patients found.',
-    'search.action.edit': 'Edit',
-    'search.action.view': 'View',
-    'crud.actions.search': 'Search',
-    'crud.actions.reset': 'Reset',
-    'crud.actions.new': 'New',
-    'crud.actions.create': 'Create',
-    'crud.actions.update': 'Update',
-    'crud.actions.cancel': 'Cancel',
-    'crud.actions.back': 'Back',
-    'crud.success.create': 'Patient created successfully.',
-    'crud.success.update': 'Patient updated successfully.',
-    'crud.error.load': 'Unable to load the patient.',
-    'crud.error.search': 'Search failed.',
-    'crud.error.save': 'Save failed.',
-    'crud.loading': 'Loading...'
+function normalizeLanguage(language: string | null | undefined): Language {
+  const candidate = (language ?? '').trim().toLowerCase();
+  return candidate.startsWith('en') ? 'en' : DEFAULT_LANGUAGE;
+}
+
+function getCurrentLanguage(): Language {
+  if (typeof document !== 'undefined' && document.documentElement.lang) {
+    return normalizeLanguage(document.documentElement.lang);
   }
-};
 
-export type MessageKey = string;
+  if (typeof navigator !== 'undefined') {
+    return normalizeLanguage(navigator.language);
+  }
 
-export function t(key: MessageKey, language: Language = DEFAULT_LANGUAGE): string {
-  return messages[language][key] ?? key;
+  return DEFAULT_LANGUAGE;
+}
+
+export function t(key: MessageKey, language: Language = getCurrentLanguage()): string {
+  return messages[language][key] ?? messages[DEFAULT_LANGUAGE][key] ?? key;
 }
