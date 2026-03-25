@@ -1,0 +1,27 @@
+# Compose locale per pubblicare frontend e backend QTMPatients su Docker Desktop.
+services:
+  qtm-patients-be:
+    container_name: qtm-patients-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    environment:
+      SERVER_PORT: 8088
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3606/QTMPatients?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: user_app
+      SPRING_DATASOURCE_PASSWORD: user_password
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://host.docker.internal:8085/realms/QTM
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  qtm-patients-fe:
+    container_name: qtm-patients-fe
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - qtm-patients-be
+    ports:
+      - "4202:4202"

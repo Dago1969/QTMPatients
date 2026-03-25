@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { MessageKey, t } from '../../i18n/messages';
+
+const AUTO_DISMISS_DELAY_MS = 4000;
 
 type FieldType = 'text' | 'number' | 'checkbox' | 'datetime-local';
 
@@ -141,7 +143,7 @@ interface FormFolder {
     `
   ]
 })
-export class PatientsCrudComponent implements OnInit {
+export class PatientsCrudComponent implements OnInit, OnDestroy {
   readonly folders: FormFolder[] = [
     {
       key: 'identity',
@@ -201,6 +203,7 @@ export class PatientsCrudComponent implements OnInit {
   pageTitleKey: MessageKey = 'patients.title.new';
   message = '';
   messageType: 'success' | 'error' = 'success';
+  private messageTimeoutId: number | null = null;
 
   constructor(
     private readonly http: HttpClient,
@@ -224,6 +227,10 @@ export class PatientsCrudComponent implements OnInit {
     this.loadPatient(this.patientId);
   }
 
+  ngOnDestroy(): void {
+    this.clearMessageTimer();
+  }
+
   get activeFields(): FormField[] {
     return this.folders.find((folder) => folder.key === this.activeFolder)?.fields ?? [];
   }
@@ -244,13 +251,15 @@ export class PatientsCrudComponent implements OnInit {
 
     request.subscribe({
       next: () => {
-        this.messageType = 'success';
-        this.message = t(this.patientId === null ? 'crud.success.create' : 'crud.success.update');
-        void this.router.navigateByUrl('/patients/search');
+        void this.router.navigate(['/patients/search'], {
+          state: {
+            flashMessage: t(this.patientId === null ? 'crud.success.create' : 'crud.success.update'),
+            flashMessageType: 'success'
+          }
+        });
       },
       error: (error: HttpErrorResponse) => {
-        this.messageType = 'error';
-        this.message = this.extractErrorMessage(error, 'crud.error.save');
+        this.showMessage(this.extractErrorMessage(error, 'crud.error.save'), 'error');
       }
     });
   }
@@ -274,11 +283,11 @@ export class PatientsCrudComponent implements OnInit {
           structureId: patient.structureId === undefined || patient.structureId === null ? '' : String(patient.structureId)
         } as PatientFormModel;
         this.loading = false;
+        this.clearMessage();
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.messageType = 'error';
-        this.message = this.extractErrorMessage(error, 'crud.error.load');
+        this.showMessage(this.extractErrorMessage(error, 'crud.error.load'), 'error');
       }
     });
   }
@@ -354,5 +363,34 @@ export class PatientsCrudComponent implements OnInit {
   private extractErrorMessage(error: HttpErrorResponse, fallbackKey: MessageKey): string {
     const detail = error.error?.detail;
     return typeof detail === 'string' && detail.length > 0 ? detail : t(fallbackKey);
+  }
+
+  private showMessage(message: string, type: 'success' | 'error' = 'success', persistent = false): void {
+    this.clearMessageTimer();
+    this.messageType = type;
+    this.message = message;
+
+    if (persistent || !message) {
+      return;
+    }
+
+    const activeMessage = message;
+    this.messageTimeoutId = window.setTimeout(() => {
+      if (this.message === activeMessage) {
+        this.clearMessage();
+      }
+    }, AUTO_DISMISS_DELAY_MS);
+  }
+
+  private clearMessage(): void {
+    this.clearMessageTimer();
+    this.message = '';
+  }
+
+  private clearMessageTimer(): void {
+    if (this.messageTimeoutId !== null) {
+      window.clearTimeout(this.messageTimeoutId);
+      this.messageTimeoutId = null;
+    }
   }
 }

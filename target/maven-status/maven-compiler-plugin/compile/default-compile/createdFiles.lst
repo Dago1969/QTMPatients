@@ -3,7 +3,6 @@ com\qtm\patients\config\ApiExceptionHandler.class
 com\qtm\patients\patient\service\PatientService.class
 com\qtm\patients\QtmPatientsApplication.class
 com\qtm\patients\patient\repository\PatientRepository.class
-com\qtm\patients\patient\dto\PatientDto.class
 com\qtm\patients\patient\service\PatientSearchMatcher.class
 com\qtm\patients\config\SecurityConfig.class
 com\qtm\patients\patient\mapper\PatientMapper.class
