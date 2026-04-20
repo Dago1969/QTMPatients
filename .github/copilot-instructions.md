@@ -1,6 +1,10 @@
 # Logging
 - Non usare mai System.out.println o System.err.println per loggare nei progetti Java: usa sempre un logger (es. SLF4J, Lombok @Slf4j, LoggerFactory, ecc.)
 
+# Stato progetto
+- `QTMPatients` e un progetto morto: NON DEVE MAI essere usato, modificato, esteso, compilato o considerato come target di nuove funzionalita.
+- Se una richiesta coinvolge `QTMPatients`, devi ignorare il progetto e lavorare invece sui progetti attivi della workspace, salvo esplicita richiesta dell'utente di fare sola analisi storica o documentale senza modifiche.
+
 # Compilazione globale
 
 Quando l’utente chiede "compila tutto" devi SEMPRE:
